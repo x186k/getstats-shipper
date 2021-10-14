@@ -4,10 +4,27 @@
 // http://demo.unified-streaming.com/players/dash.js-2.4.1/build/jsdoc/jsdoc_cheat-sheet.pdf
 
 /**
+ * @param {string} name
+ **/
+
+ function getCookie(name) {
+    let value = `; ${document.cookie}`;
+    let parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+ }
+
+
+/**
  * @param {RTCPeerConnection} pc
- * @param {string} url
  */
-function startShipping(pc, url) {
+function startGetStatsShipping(pc) {
+
+    let url = getCookie('getstats-shipper-url')
+    if (typeof url === 'undefined') {
+        console.debug('statsUrl cookie not found')
+        return
+    }
+    console.debug('statsUrl cookie WAS found')
 
     const ct = { 'Content-Type': 'application/json' }
 
