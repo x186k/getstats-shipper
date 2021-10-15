@@ -7,11 +7,11 @@
  * @param {string} name
  **/
 
- function getCookie(name) {
+function getCookie(name) {
     let value = `; ${document.cookie}`;
     let parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
- }
+}
 
 
 /**
@@ -37,7 +37,13 @@ function startGetStatsShipping(pc) {
         pc.getStats(null).then(stats => {
             let json = JSON.stringify(Object.fromEntries(stats))
 
-            let fo = { method: 'POST', headers: ct, body: json }
+            let fo = {
+                method: 'POST',
+                /** @type {RequestMode} */ mode: 'no-cors', // magic is real!
+                headers: ct,
+                body: json
+            }
+
 
             fetch(url, fo)
 
