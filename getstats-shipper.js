@@ -13,6 +13,16 @@ function getCookie(name) {
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
 
+/**
+ * @return {string}
+ **/
+function rand63string() {
+    var b = new BigUint64Array(1)
+    window.crypto.getRandomValues(b)
+    return BigInt.asUintN(63, b[0]).toString()
+}
+
+
 
 /**
  * @param {RTCPeerConnection} pc
@@ -24,18 +34,27 @@ function startGetStatsShipping(pc) {
         console.debug('statsUrl cookie not found')
         return
     }
-    console.debug('statsUrl cookie WAS found')
+    console.debug('will send stats: statsUrl cookie WAS found')
 
     const ct = { 'Content-Type': 'application/json' }
 
-    const period = 30 * 1000 // milliseconds
+    // a single unique 64 bit value per RTCPeerConnection
+    // makes SQLite analysis easier
+    const pcid = rand63string()     
+
+    // milliseconds between reports
+    const period = 30 * 1000 
 
     // launch first with no delay
     setTimeout(myCallback, 0)
 
     function myCallback() {
         pc.getStats(null).then(stats => {
-            let json = JSON.stringify(Object.fromEntries(stats))
+            let reports = Object.fromEntries(stats)
+
+            let body = { PCID: pcid, Reports: reports }
+
+            let json = JSON.stringify(body)
 
             let fo = {
                 method: 'POST',
@@ -43,7 +62,6 @@ function startGetStatsShipping(pc) {
                 headers: ct,
                 body: json
             }
-
 
             fetch(url, fo)
 
