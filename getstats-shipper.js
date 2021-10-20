@@ -30,7 +30,7 @@ function rand63string() {
 function startGetStatsShipping(pc) {
 
     let url = getCookie('getstats-shipper-url')
-    if (typeof url === 'undefined') {
+    if (typeof url === 'undefined' || url == '') {
         console.debug('statsUrl cookie not found')
         return
     }
@@ -40,10 +40,10 @@ function startGetStatsShipping(pc) {
 
     // a single unique 64 bit value per RTCPeerConnection
     // makes SQLite analysis easier
-    const pcid = rand63string()     
+    const pcid = rand63string()
 
     // milliseconds between reports
-    const period = 30 * 1000 
+    const period = 30 * 1000
 
     // launch first with no delay
     setTimeout(myCallback, 0)
